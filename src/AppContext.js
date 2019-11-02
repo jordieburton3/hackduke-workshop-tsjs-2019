@@ -14,13 +14,16 @@ export class WorkshopContext extends React.PureComponent {
             net: null,
             classifier: knnClassifier.create(),
             examples: [],
-            result: null
+            result: null,
+            image: null
         };
 
         this.setCamera = this.setCamera.bind(this);
         this.addExample = this.addExample.bind(this);
         this.newExample = this.newExample.bind(this);
         this.checkResults = this.checkResults.bind(this);
+        this.addImageFileExample = this.addImageFileExample.bind(this);
+        this.setImage = this.setImage.bind(this);
     }
 
     async initNet() {
@@ -38,6 +41,10 @@ export class WorkshopContext extends React.PureComponent {
         this.setState({ camera: camera });
     }
 
+    setImage(image) {
+        this.setState({ image: image });
+    }
+
     newExample(exampleId) {
         if (this.state.examples.indexOf(exampleId) !== -1) {
             return;
@@ -49,8 +56,16 @@ export class WorkshopContext extends React.PureComponent {
 
     async checkResults() {
         const { classifier, net, camera } = this.state;
+        //console.log(classifier.getNumClasses());
         if (classifier.getNumClasses() > 0) {
-            const img = await camera.capture();
+            const img = this.state.image;
+            if (!img) {
+                //console.log("asasd");
+                return;
+            }
+            if (img) {
+                //console.log(img);
+            }
       
             // Get the activation from mobilenet from the webcam.
             const activation = net.infer(img, 'conv_preds');
@@ -64,8 +79,7 @@ export class WorkshopContext extends React.PureComponent {
             // `;s
       
             // Dispose the tensor to release the memory.
-            this.setState({ result: result })
-            img.dispose();
+            this.setState({ result: result });
           }
       
           await tf.nextFrame();
@@ -88,6 +102,21 @@ export class WorkshopContext extends React.PureComponent {
         img.dispose();
     }
 
+    async addImageFileExample(classId, image) {
+        //console.log(image);
+        //console.log(this.state.net);
+        if (!this.state.net || !classId || !image) {
+            return;
+        }
+        //console.log(image);
+        // Get the intermediate activation of MobileNet 'conv_preds' and pass that
+        // to the KNN classifier.
+        const activation = this.state.net.infer(image, 'conv_preds');
+
+        // Pass the intermediate activation to the classifier.
+        this.state.classifier.addExample(activation, classId);
+    }
+
     render() {
         //console.log(this.state.examples);
         return (
@@ -96,7 +125,9 @@ export class WorkshopContext extends React.PureComponent {
                 actions: {
                     setCamera: this.setCamera,
                     newExample: this.newExample,
-                    addExample: this.addExample
+                    addExample: this.addExample,
+                    addImageFileExample: this.addImageFileExample,
+                    setImage: this.setImage
                 }
             }}>
                 {this.state.net ? "Ready to go!" : "Net still initializing"}

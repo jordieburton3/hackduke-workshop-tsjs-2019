@@ -7,15 +7,15 @@ import { WorkshopContext } from './AppContext';
 import { ExampleInput, ConnectedExampleInput } from './ExampleInput';
 import { ConnectedImageCaptureButton } from './ImageCaptureButtons';
 import { ConnectedPrediction } from './Prediction';
+import { ImageUpload, ConnectedImageUpload } from './ImageUpload';
 
 function App() {
   return (
     <div className="App">
       <WorkshopContext>
-        <ConnectedImageCapture />
 		<ConnectedExampleInput />
-		<ConnectedImageCaptureButton />
 		<ConnectedPrediction />
+		<ConnectedImageUpload />
       </WorkshopContext>
     </div>
   );

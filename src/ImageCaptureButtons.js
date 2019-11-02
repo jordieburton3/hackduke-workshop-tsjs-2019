@@ -7,20 +7,27 @@ export class ImageCaptureButton extends React.PureComponent {
     }
 
     render() {
-        const { examples } = this.props;
+        const { examples, image, addImageFileExample, resetImageState } = this.props;
         //console.log(examples);
+        console.log(image);
         return (
             <div className="image-capture-button__wrapper">
-                {examples.map(e => <button id={`${e}`} key={e} onClick={() => this.props.addExample(e)}>{e}</button>)}
+                {examples.map(e => <button id={`${e}`} key={e} onClick={() => {
+                    addImageFileExample(e, image);
+                    resetImageState();
+                }}>
+                {e}
+                </button>
+            )}
             </div>
         );
     }
 }
 
-export const ConnectedImageCaptureButton = () => (
+export const ConnectedImageCaptureButton = (props) => (
     <AppContext.Consumer>
         {context => (
-            <ImageCaptureButton examples={context.state.examples} addExample={context.actions.addExample}/>
+            <ImageCaptureButton examples={context.state.examples} addImageFileExample={context.actions.addImageFileExample} resetImageState={props.resetImageState} image={props.image}/>
         )}
     </AppContext.Consumer>
 );

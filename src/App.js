@@ -1,24 +1,22 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { ConnectedImageCapture, ImageCapture } from './TensorComponents/ImageCapture';
+import * as knnClassifier from '@tensorflow-models/knn-classifier';
+import { WorkshopContext } from './AppContext';
+import { ExampleInput, ConnectedExampleInput } from './ExampleInput';
+import { ConnectedImageCaptureButton } from './ImageCaptureButtons';
+import { ConnectedPrediction } from './Prediction';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <WorkshopContext>
+        <ConnectedImageCapture />
+		<ConnectedExampleInput />
+		<ConnectedImageCaptureButton />
+		<ConnectedPrediction />
+      </WorkshopContext>
     </div>
   );
 }
